@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Voyage avec Suzy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --cream:#FFF8F0;--coral:#FF6B6B;--coral-dk:#E85555;
+  --forest:#2D6A4F;--dark:#2C2C2C;--mid:#666;--light:#999;--white:#fff;
+  --sh-sm:0 2px 14px rgba(0,0,0,.07);--sh-md:0 6px 24px rgba(0,0,0,.10);
+  --sh-lg:0 12px 40px rgba(0,0,0,.13);--r:16px;--nav:68px
+}
+html{scroll-behavior:smooth}
+body{background:var(--cream);color:var(--dark);font-family:'Lato',sans-serif;font-size:16px;line-height:1.65;overflow-x:hidden}
+img{max-width:100%;display:block}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:900;
+  height:var(--nav);display:flex;align-items:center;justify-content:space-between;
+  padding:0 clamp(1rem,4vw,3rem);
+  background:rgba(255,248,240,.93);backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(255,107,107,.12);transition:box-shadow .3s
+}
+nav.scrolled{box-shadow:var(--sh-sm)}
+.nav-brand{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;text-decoration:none;color:var(--dark)}
+.nav-brand span{color:var(--coral)}
+.nav-menu{display:flex;list-style:none;gap:2.4rem}
+.nav-menu a{text-decoration:none;font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dark);position:relative;transition:color .2s}
+.nav-menu a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:2px;background:var(--coral);border-radius:2px;transition:width .25s}
+.nav-menu a:hover{color:var(--coral)}
+.nav-menu a:hover::after{width:100%}
+.nav-toggle{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:4px}
+.nav-toggle span{display:block;width:22px;height:2px;background:var(--dark);border-radius:2px;transition:all .3s}
+
+/* ── HERO ── */
+#hero{
+  min-height:88vh;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;text-align:center;
+  padding:calc(var(--nav) + 2rem) 2rem 5rem;
+  background:
+    radial-gradient(ellipse 65% 55% at 82% 18%,rgba(255,107,107,.10) 0%,transparent 60%),
+    radial-gradient(ellipse 55% 50% at 18% 82%,rgba(45,106,79,.08) 0%,transparent 60%),
+    var(--cream);
+  position:relative;overflow:hidden
+}
+.hero-deco{position:absolute;border-radius:50%;pointer-events:none}
+.hd1{width:640px;height:640px;background:var(--coral);opacity:.055;top:-220px;right:-220px}
+.hd2{width:440px;height:440px;background:var(--forest);opacity:.055;bottom:-160px;left:-160px}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:.55rem;
+  font-size:.72rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--coral);background:rgba(255,107,107,.08);
+  border:1px solid rgba(255,107,107,.25);padding:.4rem 1.1rem;border-radius:50px;
+  margin-bottom:1.4rem;animation:fadeUp .8s ease both
+}
+.hero-title{
+  font-family:'Playfair Display',serif;font-size:clamp(3rem,9vw,6.5rem);
+  font-weight:700;line-height:1;letter-spacing:-.03em;color:var(--dark);
+  margin-bottom:1.1rem;animation:fadeUp .8s .1s ease both
+}
+.hero-title em{font-style:italic;color:var(--coral)}
+.hero-tagline{
+  font-family:'Playfair Display',serif;font-style:italic;
+  font-size:clamp(1rem,2.8vw,1.35rem);color:var(--mid);
+  margin-bottom:2.2rem;animation:fadeUp .8s .2s ease both
+}
+.hero-stats{
+  display:flex;gap:2.8rem;justify-content:center;
+  margin-bottom:2.2rem;animation:fadeUp .8s .3s ease both
+}
+.hero-stats div{font-size:.78rem;color:var(--mid);letter-spacing:.06em}
+.hero-stats strong{display:block;font-family:'Playfair Display',serif;font-size:1.9rem;font-weight:700;color:var(--dark);line-height:1.1;margin-bottom:.12rem}
+.hero-btn{
+  display:inline-flex;align-items:center;gap:.5rem;text-decoration:none;
+  background:var(--coral);color:#fff;font-size:.8rem;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;padding:.88rem 2.2rem;
+  border-radius:50px;box-shadow:0 6px 24px rgba(255,107,107,.36);
+  transition:background .2s,transform .2s,box-shadow .2s;
+  animation:fadeUp .8s .4s ease both
+}
+.hero-btn:hover{background:var(--coral-dk);transform:translateY(-3px);box-shadow:0 10px 30px rgba(255,107,107,.44)}
+.hero-scroll{
+  position:absolute;bottom:1.8rem;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:5px;
+  opacity:.4;animation:fadeUp 1s .7s ease both,nudge 2.8s 1.5s ease infinite
+}
+.hero-scroll span{font-size:.66rem;letter-spacing:.18em;text-transform:uppercase}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes nudge{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(9px)}}
+
+/* ── SECTION SHARED ── */
+.section{padding:clamp(3rem,7vw,5.5rem) clamp(1rem,5vw,3.5rem)}
+.container{max-width:1180px;margin:0 auto}
+.eyebrow{font-size:.7rem;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:var(--coral);margin-bottom:.45rem}
+.sec-title{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4vw,2.7rem);line-height:1.2;margin-bottom:.55rem}
+.sec-sub{color:var(--mid);font-size:.98rem;max-width:530px;font-weight:300;margin-bottom:0}
+
+/* ── FILTERS ── */
+.filter-bar{display:flex;flex-wrap:wrap;gap:.6rem;margin:1.8rem 0 1.2rem}
+.f-btn{
+  padding:.5rem 1.3rem;border-radius:50px;border:1.5px solid #DDD5CC;
+  background:var(--white);color:var(--mid);font-family:'Lato',sans-serif;
+  font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  cursor:pointer;transition:all .2s
+}
+.f-btn:hover{border-color:var(--coral);color:var(--coral)}
+.f-btn.active{background:var(--coral);border-color:var(--coral);color:#fff;box-shadow:0 3px 14px rgba(255,107,107,.32)}
+
+/* ── MAP ── */
+#map{width:100%;height:520px;border-radius:var(--r);box-shadow:var(--sh-lg);overflow:hidden}
+@keyframes markerDrop{
+  0%  {opacity:0;transform:translateY(-38px) scale(.5)}
+  65% {opacity:1;transform:translateY(5px) scale(1.1)}
+  82% {transform:translateY(-3px) scale(.96)}
+  100%{transform:translateY(0) scale(1)}
+}
+.pin{width:34px;height:34px;border-radius:50%;border:3px solid #fff;box-shadow:0 3px 12px rgba(0,0,0,.22);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .18s,box-shadow .18s;animation:markerDrop .55s cubic-bezier(.34,1.56,.64,1) both}
+.pin:hover{transform:scale(1.25);box-shadow:0 6px 22px rgba(0,0,0,.3)}
+.pin-dot{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.75)}
+
+/* Popup overrides */
+.tpop .leaflet-popup-content-wrapper{
+  padding:0!important;border-radius:var(--r)!important;border:none!important;overflow:hidden;
+  box-shadow:0 8px 32px rgba(0,0,0,.18),0 2px 14px rgba(255,107,107,.13)!important
+}
+.tpop .leaflet-popup-content{margin:0!important;width:292px!important}
+.tpop .leaflet-popup-tip-container{display:none}
+.tpop .leaflet-popup-close-button{
+  position:absolute!important;right:10px!important;top:10px!important;
+  color:#fff!important;font-size:16px!important;line-height:24px!important;
+  width:24px!important;height:24px!important;text-align:center!important;
+  background:var(--coral)!important;border-radius:50%!important;
+  text-shadow:none!important;padding:0!important;z-index:2!important;
+  font-weight:700!important;transition:background .2s!important
+}
+.tpop .leaflet-popup-close-button:hover{background:var(--coral-dk)!important}
+.pop-img{width:100%;height:180px;object-fit:cover;display:block;border-radius:var(--r) var(--r) 0 0}
+.pop-body{padding:1rem 1.15rem 1.25rem}
+.pop-title{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;line-height:1.3;margin-bottom:.4rem;color:var(--dark)}
+.pop-desc{font-size:.8rem;color:var(--mid);line-height:1.55;margin-bottom:.9rem}
+.pop-link{display:inline-flex;align-items:center;gap:.32rem;font-size:.75rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;text-decoration:none;color:var(--coral);border-bottom:1.5px solid rgba(255,107,107,.3);padding-bottom:1px;transition:border-color .2s,gap .2s}
+.pop-link:hover{border-color:var(--coral);gap:.5rem}
+
+/* ── CLUSTERS ── */
+.marker-cluster-small,.marker-cluster-medium,.marker-cluster-large{background-color:rgba(255,107,107,.22)!important}
+.marker-cluster-small div,.marker-cluster-medium div,.marker-cluster-large div{background-color:rgba(255,107,107,.78)!important;color:#fff!important;font:700 13px/30px 'Lato',sans-serif!important;box-shadow:0 2px 10px rgba(255,107,107,.4)}
+
+/* ── BLOG ── */
+#blog{background:linear-gradient(180deg,var(--cream) 0%,#FFF0E6 100%)}
+.blog-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:1.8rem;margin-top:1.5rem}
+.blog-card{background:var(--white);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh-sm);display:flex;flex-direction:column;cursor:pointer;transition:transform .28s,box-shadow .28s}
+.blog-card:hover{transform:translateY(-7px);box-shadow:var(--sh-lg)}
+.blog-thumb-wrap{overflow:hidden;height:215px;flex-shrink:0}
+.blog-thumb{width:100%;height:100%;object-fit:cover;transition:transform .4s}
+.blog-card:hover .blog-thumb{transform:scale(1.05)}
+.blog-body{padding:1.3rem 1.4rem 1rem;flex:1;display:flex;flex-direction:column}
+.blog-meta{display:flex;align-items:center;gap:.7rem;margin-bottom:.65rem}
+.blog-tag{font-size:.66rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--coral);background:rgba(255,107,107,.1);padding:.18rem .65rem;border-radius:50px}
+.blog-date{font-size:.76rem;color:var(--light)}
+.blog-title{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;line-height:1.35;margin-bottom:.6rem;color:var(--dark)}
+.blog-excerpt{font-size:.85rem;color:var(--mid);line-height:1.6;flex:1;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.blog-read{display:inline-flex;align-items:center;gap:.35rem;margin-top:1.1rem;font-size:.76rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--forest);text-decoration:none;transition:gap .2s}
+.blog-read:hover{gap:.6rem}
+
+/* ── FOOTER ── */
+footer{background:var(--cream);border-top:2px solid var(--forest);text-align:center;padding:2.5rem 1rem}
+.ft-inner{display:flex;flex-direction:column;align-items:center;gap:1.2rem}
+.ft-socials{display:flex;gap:1rem;align-items:center}
+.ft-icon{color:var(--coral);display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border:1.5px solid rgba(255,107,107,.3);border-radius:50%;transition:all .22s}.ft-icon:hover{background:var(--coral);color:#fff;border-color:var(--coral)}
+.ft-copy{color:var(--mid);font-size:.82rem}
+.ft-top{display:inline-flex;align-items:center;gap:.4rem;font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--forest);transition:color .22s}.ft-top:hover{color:var(--coral)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .nav-menu{
+    position:fixed;top:var(--nav);left:0;right:0;z-index:901;
+    background:rgba(255,248,240,.97);backdrop-filter:blur(14px);
+    flex-direction:column;gap:0;padding:1rem 0 1.5rem;
+    border-bottom:1px solid rgba(255,107,107,.12);box-shadow:var(--sh-md);
+    transform:translateY(-110%);transition:transform .3s;pointer-events:none
+  }
+  .nav-menu.open{transform:translateY(0);pointer-events:auto}
+  .nav-menu li{width:100%}
+  .nav-menu a{display:block;padding:.9rem 2rem;font-size:.88rem}
+  .nav-menu a::after{display:none}
+  .nav-toggle{display:flex}
+  .nav-toggle.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+  .nav-toggle.open span:nth-child(2){opacity:0;transform:scaleX(0)}
+  .nav-toggle.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+  #map{height:360px}
+  .hero-scroll{display:none}
+  .hero-stats{gap:1.8rem}
+  .blog-grid{grid-template-columns:1fr;max-width:440px;margin-left:auto;margin-right:auto}
+}
+@media(max-width:480px){
+  .hero-title{font-size:2.8rem}
+  #map{height:300px}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="#hero" class="nav-brand">Voyage <span>avec Suzy</span></a>
+  <ul class="nav-menu" id="navMenu">
+    <li><a href="#hero">Accueil</a></li>
+    <li><a href="blog.html">Blog</a></li>
+    <li><a href="about.html">À propos</a></li>
+  </ul>
+  <button class="nav-toggle" id="navToggle" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-deco hd1"></div>
+  <div class="hero-deco hd2"></div>
+  <div class="hero-eyebrow">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+    Journal de voyage
+  </div>
+  <h1 class="hero-title">Voyage <em>avec</em><br>Suzy</h1>
+  <p class="hero-tagline">Histoires des quatre coins du monde</p>
+  <div class="hero-stats">
+    <div><strong>8</strong>destinations</div>
+    <div><strong>4</strong>continents</div>
+    <div><strong>∞</strong>souvenirs</div>
+  </div>
+  <a href="#map-section" class="hero-btn">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
+    Explorer la carte
+  </a>
+  <div class="hero-scroll">
+    <span>Défiler</span>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+  </div>
+</section>
+
+<!-- MAP SECTION -->
+<section class="section" id="map-section">
+  <div class="container">
+    <p class="eyebrow">Mes destinations</p>
+    <h2 class="sec-title">La carte de mes aventures</h2>
+    <p class="sec-sub">Chaque épingle est une histoire — cliquez pour la découvrir.</p>
+    <div class="filter-bar">
+      <button class="f-btn active" data-filter="all">Tout</button>
+      <button class="f-btn" data-filter="culture">Culture</button>
+      <button class="f-btn" data-filter="gastronomie">Gastronomie</button>
+      <button class="f-btn" data-filter="aventure">Aventure</button>
+    </div>
+    <div id="map"></div>
+  </div>
+</section>
+
+<!-- BLOG SECTION -->
+<section class="section" id="blog">
+  <div class="container">
+    <p class="eyebrow">Mes derniers articles</p>
+    <h2 class="sec-title">Fraîchement écrit</h2>
+    <p class="sec-sub">Des histoires, des conseils et des coups de cœur partagés avec sincérité.</p>
+    <div class="blog-grid">
+
+      <article class="blog-card">
+        <div class="blog-thumb-wrap">
+          <img src="https://images.unsplash.com/photo-1533105079780-92b9be482077?auto=format&fit=crop&w=600&q=80" alt="Santorin" class="blog-thumb" loading="lazy">
+        </div>
+        <div class="blog-body">
+          <div class="blog-meta">
+            <span class="blog-tag">Culture</span>
+            <span class="blog-date">14 mai 2025</span>
+          </div>
+          <h3 class="blog-title">Santorin en dehors des sentiers battus : mes adresses secrètes</h3>
+          <p class="blog-excerpt">Oui, Santorin est bondée. Oui, les couchers de soleil à Oïa attirent des centaines de touristes. Mais si l'on sait où regarder, l'île garde encore quelques trésors jalousement préservés...</p>
+          <a href="article-santorin.html" class="blog-read">Lire l'article →</a>
+        </div>
+      </article>
+
+      <article class="blog-card">
+        <div class="blog-thumb-wrap">
+          <img src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=600&q=80" alt="Tokyo" class="blog-thumb" loading="lazy">
+        </div>
+        <div class="blog-body">
+          <div class="blog-meta">
+            <span class="blog-tag">Gastronomie</span>
+            <span class="blog-date">2 avril 2025</span>
+          </div>
+          <h3 class="blog-title">48h à Tokyo : le guide gourmand ultime</h3>
+          <p class="blog-excerpt">De l'izakaya de quartier aux étoilés Michelin en passant par le meilleur ramen de Shinjuku — un itinéraire pour manger à Tokyo sans se perdre ni se ruiner.</p>
+          <a href="article-tokyo.html" class="blog-read">Lire l'article →</a>
+        </div>
+      </article>
+
+      <article class="blog-card">
+        <div class="blog-thumb-wrap">
+          <img src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=600&q=80" alt="Bali" class="blog-thumb" loading="lazy">
+        </div>
+        <div class="blog-body">
+          <div class="blog-meta">
+            <span class="blog-tag">Aventure</span>
+            <span class="blog-date">18 mars 2025</span>
+          </div>
+          <h3 class="blog-title">Bali à l'aube : pourquoi se lever à 4h en vaut la peine</h3>
+          <p class="blog-excerpt">Il y a quelque chose de magique dans les rizières de Tegalalang avant que le soleil ne se lève vraiment. Les brumes matinales, le silence, les premières lumières dorées sur les terrasses...</p>
+          <a href="article-bali.html" class="blog-read">Lire l'article →</a>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer id="footer">
+  <div class="ft-inner">
+    <div class="ft-socials">
+      <a href="#" class="ft-icon" aria-label="Instagram"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".5" fill="currentColor" stroke="none"/></svg></a>
+      <a href="#" class="ft-icon" aria-label="YouTube"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="currentColor" stroke="none"/></svg></a>
+      <a href="#" class="ft-icon" aria-label="Twitter / X"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.261 5.632 5.903-5.632zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+    </div>
+    <p class="ft-copy">© 2025 Wander With Suzy</p>
+    <a href="#" onclick="event.preventDefault();window.scrollTo({top:0,behavior:'smooth'})" class="ft-top">Retour en haut <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg></a>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+<script>
+/* NAV */
+const navbar = document.getElementById('navbar');
+const navToggle = document.getElementById('navToggle');
+const navMenu = document.getElementById('navMenu');
+
+window.addEventListener('scroll', () => navbar.classList.toggle('scrolled', scrollY > 30));
+navToggle.addEventListener('click', () => {navMenu.classList.toggle('open');navToggle.classList.toggle('open')});
+navMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {navMenu.classList.remove('open');navToggle.classList.remove('open')}));
+
+/* MAP DATA */
+const DEST = [
+  {
+    city:'Lisbonne', country:'Portugal', coords:[38.7223,-9.1393],
+    desc:"Là où tout a commencé. Pastéis de nata et couchers de soleil à l'heure dorée.",
+    cat:'depart', label:'Point de départ', color:'#FF6B6B',
+    img:'https://picsum.photos/seed/lisbonne42/500/180'
+  },
+  {
+    city:'Tokyo', country:'Japon', coords:[35.6762,139.6503],
+    desc:'Fleurs de cerisier et un magnifique chaos contrôlé.',
+    cat:'culture', label:'Culture', color:'#4A90D9',
+    img:'https://picsum.photos/seed/tokyoview88/500/180'
+  },
+  {
+    city:'Bangkok', country:'Thaïlande', coords:[13.7563,100.5018],
+    desc:'Le paradis de la cuisine de rue. Chaque recoin offre une nouvelle saveur.',
+    cat:'gastronomie', label:'Gastronomie', color:'#E9921C',
+    img:'https://picsum.photos/seed/bangkokstreet77/500/180'
+  },
+  {
+    city:'Marrakech', country:'Maroc', coords:[31.6295,-7.9811],
+    desc:'Les souks, les couleurs, la folie grandiose.',
+    cat:'aventure', label:'Aventure', color:'#2D6A4F',
+    img:'https://picsum.photos/seed/marrakech55/500/180'
+  },
+  {
+    city:'Côte amalfitaine', country:'Italie', coords:[40.6340,14.6027],
+    desc:"Citronniers, routes à flanc de falaise et l'eau la plus bleue.",
+    cat:'culture', label:'Culture', color:'#4A90D9',
+    img:'https://picsum.photos/seed/amalficoast33/500/180'
+  },
+  {
+    city:'Hanoï', country:'Vietnam', coords:[21.0278,105.8342],
+    desc:'Motos, pho fumant et la magie du vieux quartier.',
+    cat:'gastronomie', label:'Gastronomie', color:'#E9921C',
+    img:'https://picsum.photos/seed/hanoiold99/500/180'
+  },
+  {
+    city:'Santorin', country:'Grèce', coords:[36.3932,25.4615],
+    desc:'Dômes bleus et couchers de soleil incroyables.',
+    cat:'culture', label:'Culture', color:'#4A90D9',
+    img:'https://picsum.photos/seed/santoriniblue66/500/180'
+  },
+  {
+    city:'Bali', country:'Indonésie', coords:[-8.3405,115.0920],
+    desc:"Rizières en terrasses à l'aube, encens des temples et surf.",
+    cat:'aventure', label:'Aventure', color:'#2D6A4F',
+    img:'https://picsum.photos/seed/balitemple44/500/180'
+  }
+];
+
+/* MAP INIT */
+const map = L.map('map', { center:[25,30], zoom:2, scrollWheelZoom:false, zoomControl:true });
+
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+  attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+  subdomains:'abcd', maxZoom:19
+}).addTo(map);
+
+/* CLUSTER GROUP */
+const clusterGroup = L.markerClusterGroup({ showCoverageOnHover:false, maxClusterRadius:60 });
+
+/* MARKERS */
+let pendingOpen = null;
+
+const markers = DEST.map((d, i) => {
+  const icon = L.divIcon({
+    className:'',
+    html:`<div class="pin" style="background:${d.color};animation-delay:${i * 110}ms"><div class="pin-dot"></div></div>`,
+    iconSize:[34,34], iconAnchor:[17,17], popupAnchor:[0,-22]
+  });
+
+  const html = `
+    <div>
+      <img src="${d.img}" alt="${d.city}" class="pop-img"
+        onerror="this.src='https://picsum.photos/seed/travel${Math.random()|0}/500/180'">
+      <div class="pop-body">
+        <h3 class="pop-title">${d.city}, <strong>${d.country}</strong></h3>
+        <p class="pop-desc">${d.desc}</p>
+        <a href="#blog" class="pop-link">En savoir plus →</a>
+      </div>
+    </div>`;
+
+  const popup = L.popup({ maxWidth:292, className:'tpop', autoPan:true }).setContent(html);
+  const marker = L.marker(d.coords, { icon });
+
+  marker.on('click', function() {
+    if (pendingOpen) map.off('moveend', pendingOpen);
+    pendingOpen = function() {
+      popup.setLatLng(d.coords).openOn(map);
+      pendingOpen = null;
+    };
+    map.flyTo(d.coords, 5, { animate:true, duration:0.4 });
+    map.once('moveend', pendingOpen);
+  });
+
+  clusterGroup.addLayer(marker);
+  return { marker, cat: d.cat };
+});
+
+map.addLayer(clusterGroup);
+
+const initialBounds = L.latLngBounds(DEST.map(d => d.coords));
+map.fitBounds(initialBounds, { padding:[55,55] });
+
+map.on('popupclose', function() {
+  map.flyToBounds(initialBounds, { padding:[55,55], animate:true, duration:0.4 });
+});
+
+/* FILTERS */
+document.querySelectorAll('.f-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.f-btn').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+    const f = this.dataset.filter;
+    markers.forEach(({ marker, cat }) => {
+      if (f === 'all' || cat === f) { if (!clusterGroup.hasLayer(marker)) clusterGroup.addLayer(marker); }
+      else { clusterGroup.removeLayer(marker); }
+    });
+  });
+});
+</script>
+<script>
+(function(){
+  var css='.reveal{opacity:0;transform:translateY(20px);transition:opacity .55s ease,transform .55s ease}.reveal.visible{opacity:1;transform:translateY(0)}';
+  var st=document.createElement('style');st.textContent=css;document.head.appendChild(st);
+  var sel='.sec-title,.sec-sub,.eyebrow,.filter-bar,#map,.blog-card,.card,.stat-card,.nl-box,.art-lead,.article-body h2,.article-body p,.article-body blockquote,.art-img,.back-wrap';
+  var els=[...document.querySelectorAll(sel)].filter(el=>!el.closest('nav,footer,#hero,.article-hero'));
+  var seen=new Map();
+  els.forEach(el=>{
+    el.classList.add('reveal');
+    var p=el.parentElement,n=seen.get(p)||0;
+    el.dataset.rd=Math.min(n,3)*110;
+    seen.set(p,n+1);
+  });
+  var io=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(!e.isIntersecting)return;
+      e.target.style.transitionDelay=(e.target.dataset.rd||0)+'ms';
+      e.target.classList.add('visible');
+      io.unobserve(e.target);
+    });
+  },{threshold:.12,rootMargin:'0px 0px -30px 0px'});
+  els.forEach(el=>io.observe(el));
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blog — Voyage avec Suzy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --cream:#FFF8F0;--coral:#FF6B6B;--coral-dk:#E85555;
+  --forest:#2D6A4F;--dark:#2C2C2C;--mid:#666;--light:#999;--white:#fff;
+  --sh-sm:0 2px 14px rgba(0,0,0,.07);--sh-md:0 6px 24px rgba(0,0,0,.10);
+  --sh-lg:0 14px 44px rgba(0,0,0,.13);--r:16px;--nav:68px
+}
+html{scroll-behavior:smooth}
+body{background:var(--cream);color:var(--dark);font-family:'Lato',sans-serif;font-size:16px;line-height:1.65;overflow-x:hidden}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:900;
+  height:var(--nav);display:flex;align-items:center;justify-content:space-between;
+  padding:0 clamp(1rem,4vw,3rem);
+  background:rgba(255,248,240,.93);backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(255,107,107,.12);transition:box-shadow .3s
+}
+nav.scrolled{box-shadow:var(--sh-sm)}
+.nav-brand{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:var(--dark)}
+.nav-brand span{color:var(--coral)}
+.nav-menu{display:flex;list-style:none;gap:2.4rem}
+.nav-menu a{font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dark);position:relative;transition:color .2s}
+.nav-menu a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:2px;background:var(--coral);border-radius:2px;transition:width .25s}
+.nav-menu a:hover,.nav-menu a.active{color:var(--coral)}
+.nav-menu a:hover::after,.nav-menu a.active::after{width:100%}
+.nav-toggle{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:4px}
+.nav-toggle span{display:block;width:22px;height:2px;background:var(--dark);border-radius:2px;transition:all .3s}
+
+/* ── PAGE HEADER ── */
+.page-header{
+  padding:calc(var(--nav) + 4rem) clamp(1rem,5vw,3.5rem) 3.5rem;
+  background:
+    radial-gradient(ellipse 60% 60% at 90% 10%,rgba(255,107,107,.09) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 50% at 10% 90%,rgba(45,106,79,.07) 0%,transparent 60%),
+    var(--cream);
+  text-align:center;position:relative;overflow:hidden
+}
+.ph-deco{position:absolute;border-radius:50%;pointer-events:none}
+.ph-d1{width:500px;height:500px;background:var(--coral);opacity:.05;top:-220px;right:-180px}
+.ph-d2{width:360px;height:360px;background:var(--forest);opacity:.05;bottom:-160px;left:-140px}
+.page-header .inner{position:relative;z-index:1;max-width:640px;margin:0 auto}
+.ph-eyebrow{
+  display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--coral);background:rgba(255,107,107,.09);
+  border:1px solid rgba(255,107,107,.25);padding:.38rem 1rem;border-radius:50px;
+  margin-bottom:1.2rem;animation:fadeUp .7s ease both
+}
+.ph-title{
+  font-family:'Playfair Display',serif;font-size:clamp(2.4rem,6vw,4rem);
+  font-weight:700;line-height:1.05;letter-spacing:-.025em;color:var(--dark);
+  margin-bottom:.8rem;animation:fadeUp .7s .08s ease both
+}
+.ph-title em{font-style:italic;color:var(--coral)}
+.ph-sub{
+  font-family:'Playfair Display',serif;font-style:italic;
+  font-size:clamp(.95rem,2vw,1.15rem);color:var(--mid);
+  animation:fadeUp .7s .16s ease both
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── BLOG GRID SECTION ── */
+.blog-section{padding:clamp(2.5rem,5vw,4.5rem) clamp(1rem,5vw,3.5rem) clamp(4rem,8vw,6rem)}
+.container{max-width:1100px;margin:0 auto}
+
+/* Grid: strictly 2 cols on desktop, 1 on mobile */
+.blog-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:2.2rem
+}
+
+/* ── CARD ── */
+.card{
+  background:var(--white);border-radius:var(--r);overflow:hidden;
+  box-shadow:var(--sh-sm);display:flex;flex-direction:column;
+  transition:transform .3s cubic-bezier(.25,.8,.25,1), box-shadow .3s cubic-bezier(.25,.8,.25,1)
+}
+.card:hover{transform:scale(1.02);box-shadow:var(--sh-lg)}
+
+/* Thumbnail */
+.card-thumb-wrap{overflow:hidden;height:0;padding-bottom:56.25%;position:relative;flex-shrink:0}
+.card-thumb{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  transition:transform .3s cubic-bezier(.25,.8,.25,1)
+}
+.card:hover .card-thumb{transform:scale(1.05)}
+
+/* Badge overlay */
+.card-badge{
+  position:absolute;top:.85rem;left:.85rem;
+  font-size:.62rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:#fff;padding:.22rem .7rem;border-radius:50px;backdrop-filter:blur(6px)
+}
+.badge-culture    {background:rgba(74,144,217,.85)}
+.badge-gastronomie{background:rgba(233,146,28,.85)}
+.badge-aventure   {background:rgba(45,106,79,.85)}
+.badge-depart     {background:rgba(255,107,107,.85)}
+
+/* Body */
+.card-body{padding:1.35rem 1.5rem 1.1rem;flex:1;display:flex;flex-direction:column}
+.card-meta{display:flex;align-items:center;gap:.65rem;margin-bottom:.65rem}
+.card-dest{
+  display:inline-flex;align-items:center;gap:.3rem;
+  font-size:.72rem;color:var(--mid)
+}
+.card-dest svg{color:var(--coral)}
+.card-date{font-size:.72rem;color:var(--light);margin-left:auto}
+
+.card-title{
+  font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:700;
+  line-height:1.35;color:var(--dark);margin-bottom:.65rem;
+  transition:color .2s
+}
+.card:hover .card-title{color:var(--coral)}
+
+.card-excerpt{
+  font-size:.86rem;color:var(--mid);line-height:1.6;flex:1;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden
+}
+
+/* Footer link */
+.card-footer{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.95rem 1.5rem 1.1rem;border-top:1px solid rgba(0,0,0,.05);
+  margin-top:.2rem
+}
+.card-link{
+  display:inline-flex;align-items:center;gap:.35rem;
+  font-size:.76rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--coral);transition:gap .2s
+}
+.card:hover .card-link{gap:.55rem}
+.card-link svg{transition:transform .2s}
+.card:hover .card-link svg{transform:translateX(3px)}
+
+.card-read-time{font-size:.72rem;color:var(--light)}
+
+/* ── FOOTER ── */
+footer{background:var(--cream);border-top:2px solid var(--forest);text-align:center;padding:2.5rem 1rem}
+.ft-inner{display:flex;flex-direction:column;align-items:center;gap:1.2rem}
+.ft-socials{display:flex;gap:1rem;align-items:center}
+.ft-icon{color:var(--coral);display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border:1.5px solid rgba(255,107,107,.3);border-radius:50%;transition:all .22s}.ft-icon:hover{background:var(--coral);color:#fff;border-color:var(--coral)}
+.ft-copy{color:var(--mid);font-size:.82rem}
+.ft-top{display:inline-flex;align-items:center;gap:.4rem;font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--forest);transition:color .22s}.ft-top:hover{color:var(--coral)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .nav-menu{
+    position:fixed;top:var(--nav);left:0;right:0;z-index:901;
+    background:rgba(255,248,240,.97);backdrop-filter:blur(14px);
+    flex-direction:column;gap:0;padding:1rem 0 1.5rem;
+    border-bottom:1px solid rgba(255,107,107,.12);box-shadow:var(--sh-md);
+    transform:translateY(-110%);transition:transform .3s;pointer-events:none
+  }
+  .nav-menu.open{transform:translateY(0);pointer-events:auto}
+  .nav-menu li{width:100%}
+  .nav-menu a{display:block;padding:.9rem 2rem;font-size:.88rem}
+  .nav-menu a::after{display:none}
+  .nav-toggle{display:flex}
+  .nav-toggle.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+  .nav-toggle.open span:nth-child(2){opacity:0;transform:scaleX(0)}
+  .nav-toggle.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+  .blog-grid{grid-template-columns:1fr;gap:1.6rem;max-width:520px;margin:0 auto}
+}
+@media(max-width:480px){
+  .ph-title{font-size:2.2rem}
+  .card-body{padding:1.1rem 1.2rem .9rem}
+  .card-footer{padding:.8rem 1.2rem .9rem}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="index.html" class="nav-brand">Voyage <span>avec Suzy</span></a>
+  <ul class="nav-menu" id="navMenu">
+    <li><a href="index.html">Accueil</a></li>
+    <li><a href="blog.html" class="active">Blog</a></li>
+    <li><a href="about.html">À propos</a></li>
+  </ul>
+  <button class="nav-toggle" id="navToggle" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- PAGE HEADER -->
+<header class="page-header">
+  <div class="ph-deco ph-d1"></div>
+  <div class="ph-deco ph-d2"></div>
+  <div class="inner">
+    <span class="ph-eyebrow">Tous les articles</span>
+    <h1 class="ph-title">Le <em>journal</em><br>de voyage</h1>
+    <p class="ph-sub">Histoires vraies, adresses oubliées, coups de cœur &amp; leçons apprises sur la route.</p>
+  </div>
+</header>
+
+<!-- BLOG GRID -->
+<section class="blog-section">
+  <div class="container">
+    <div class="blog-grid">
+
+      <!-- 1 -->
+      <article class="card">
+        <div class="card-thumb-wrap">
+          <img src="https://images.unsplash.com/photo-1533105079780-92b9be482077?auto=format&fit=crop&w=800&q=80" alt="Santorin" class="card-thumb" loading="lazy">
+          <span class="card-badge badge-culture">Culture</span>
+        </div>
+        <div class="card-body">
+          <div class="card-meta">
+            <span class="card-dest">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              Grèce · Santorin
+            </span>
+            <span class="card-date">14 mai 2025</span>
+          </div>
+          <h2 class="card-title">Santorin en dehors des sentiers battus : mes adresses secrètes</h2>
+          <p class="card-excerpt">Oui, Santorin est bondée. Oui, les couchers de soleil à Oïa attirent des centaines de touristes. Mais si l'on sait où regarder, l'île garde encore quelques trésors jalousement préservés.</p>
+        </div>
+        <div class="card-footer">
+          <a href="article-santorin.html" class="card-link">
+            En savoir plus
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
+          <span class="card-read-time">6 min de lecture</span>
+        </div>
+      </article>
+
+      <!-- 2 -->
+      <article class="card">
+        <div class="card-thumb-wrap">
+          <img src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=800&q=80" alt="Tokyo" class="card-thumb" loading="lazy">
+          <span class="card-badge badge-gastronomie">Gastronomie</span>
+        </div>
+        <div class="card-body">
+          <div class="card-meta">
+            <span class="card-dest">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              Japon · Tokyo
+            </span>
+            <span class="card-date">2 avril 2025</span>
+          </div>
+          <h2 class="card-title">48h à Tokyo : le guide gourmand ultime pour ne rien rater</h2>
+          <p class="card-excerpt">De l'izakaya de quartier aux étoilés Michelin en passant par le meilleur ramen de Shinjuku — un itinéraire pour manger à Tokyo sans se perdre ni se ruiner.</p>
+        </div>
+        <div class="card-footer">
+          <a href="article-tokyo.html" class="card-link">
+            En savoir plus
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
+          <span class="card-read-time">8 min de lecture</span>
+        </div>
+      </article>
+
+      <!-- 3 -->
+      <article class="card">
+        <div class="card-thumb-wrap">
+          <img src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=800&q=80" alt="Bali" class="card-thumb" loading="lazy">
+          <span class="card-badge badge-aventure">Aventure</span>
+        </div>
+        <div class="card-body">
+          <div class="card-meta">
+            <span class="card-dest">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              Indonésie · Bali
+            </span>
+            <span class="card-date">18 mars 2025</span>
+          </div>
+          <h2 class="card-title">Bali à l'aube : pourquoi se lever à 4h en vaut vraiment la peine</h2>
+          <p class="card-excerpt">Il y a quelque chose de magique dans les rizières de Tegalalang avant que le soleil ne se lève vraiment. Les brumes matinales, le silence, les premières lumières dorées.</p>
+        </div>
+        <div class="card-footer">
+          <a href="article-bali.html" class="card-link">
+            En savoir plus
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
+          <span class="card-read-time">5 min de lecture</span>
+        </div>
+      </article>
+
+      <!-- 4 -->
+      <article class="card">
+        <div class="card-thumb-wrap">
+          <img src="https://images.unsplash.com/photo-1580746738099-1cb74f972feb?auto=format&fit=crop&w=800&q=80" alt="Marrakech" class="card-thumb" loading="lazy">
+          <span class="card-badge badge-aventure">Aventure</span>
+        </div>
+        <div class="card-body">
+          <div class="card-meta">
+            <span class="card-dest">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              Maroc · Marrakech
+            </span>
+            <span class="card-date">4 février 2025</span>
+          </div>
+          <h2 class="card-title">Les médinas de Marrakech : se perdre en connaissance de cause</h2>
+          <p class="card-excerpt">Les souks ne se visitent pas, ils s'apprivoisent. Après trois jours à me perdre dans les ruelles de la médina, j'ai compris que le meilleur plan est de n'en avoir aucun.</p>
+        </div>
+        <div class="card-footer">
+          <a href="article-marrakech.html" class="card-link">
+            En savoir plus
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
+          <span class="card-read-time">7 min de lecture</span>
+        </div>
+      </article>
+
+      <!-- 5 -->
+      <article class="card">
+        <div class="card-thumb-wrap">
+          <img src="https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&w=800&q=80" alt="Côte amalfitaine" class="card-thumb" loading="lazy">
+          <span class="card-badge badge-culture">Culture</span>
+        </div>
+        <div class="card-body">
+          <div class="card-meta">
+            <span class="card-dest">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              Italie · Côte amalfitaine
+            </span>
+            <span class="card-date">21 janvier 2025</span>
+          </div>
+          <h2 class="card-title">La Côte amalfitaine en hors-saison : pourquoi c'était mon meilleur choix</h2>
+          <p class="card-excerpt">Octobre sur la Côte amalfitaine : les cars de touristes sont partis, les citronniers débordent et les propriétaires de restaurants ont enfin le temps de vous raconter leur histoire.</p>
+        </div>
+        <div class="card-footer">
+          <a href="article-amalfi.html" class="card-link">
+            En savoir plus
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
+          <span class="card-read-time">6 min de lecture</span>
+        </div>
+      </article>
+
+      <!-- 6 -->
+      <article class="card">
+        <div class="card-thumb-wrap">
+          <img src="https://images.unsplash.com/photo-1508009603885-50cf7c579365?auto=format&fit=crop&w=800&q=80" alt="Bangkok" class="card-thumb" loading="lazy">
+          <span class="card-badge badge-gastronomie">Gastronomie</span>
+        </div>
+        <div class="card-body">
+          <div class="card-meta">
+            <span class="card-dest">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              Thaïlande · Bangkok
+            </span>
+            <span class="card-date">9 décembre 2024</span>
+          </div>
+          <h2 class="card-title">Bangkok street food : mon guide des incontournables à moins de 3€</h2>
+          <p class="card-excerpt">Pad thaï au wok, mango sticky rice et soupe de nouilles au petit matin — une immersion dans les marchés nocturnes de Yaowarat et Silom pour manger comme une locale.</p>
+        </div>
+        <div class="card-footer">
+          <a href="article-bangkok.html" class="card-link">
+            En savoir plus
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
+          <span class="card-read-time">9 min de lecture</span>
+        </div>
+      </article>
+
+      <!-- 7 -->
+      <article class="card">
+        <div class="card-thumb-wrap">
+          <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=800&q=80" alt="Lisbonne" class="card-thumb" loading="lazy">
+          <span class="card-badge badge-depart">Point de départ</span>
+        </div>
+        <div class="card-body">
+          <div class="card-meta">
+            <span class="card-dest">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              Portugal · Lisbonne
+            </span>
+            <span class="card-date">3 novembre 2024</span>
+          </div>
+          <h2 class="card-title">Lisbonne : la ville qui m'a fait tomber amoureuse du voyage</h2>
+          <p class="card-excerpt">C'est ici que tout a commencé. Une fin d'après-midi sur un mirador de l'Alfama, un verre de vin verde à la main, et l'évidence absolue qu'il fallait partir explorer le monde.</p>
+        </div>
+        <div class="card-footer">
+          <a href="article-lisbonne.html" class="card-link">
+            En savoir plus
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
+          <span class="card-read-time">5 min de lecture</span>
+        </div>
+      </article>
+
+      <!-- 8 -->
+      <article class="card">
+        <div class="card-thumb-wrap">
+          <img src="https://images.unsplash.com/photo-1583417319070-4a69db38a482?auto=format&fit=crop&w=800&q=80" alt="Hanoï" class="card-thumb" loading="lazy">
+          <span class="card-badge badge-gastronomie">Gastronomie</span>
+        </div>
+        <div class="card-body">
+          <div class="card-meta">
+            <span class="card-dest">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              Vietnam · Hanoï
+            </span>
+            <span class="card-date">17 octobre 2024</span>
+          </div>
+          <h2 class="card-title">Hanoï en trois jours : l'art de ralentir dans une ville qui ne s'arrête jamais</h2>
+          <p class="card-excerpt">Motos, klaxons, pho fumant à 6h du matin et une tasse de café à l'œuf sur un trottoir du vieux quartier. Hanoï enseigne que ralentir n'est pas une question de vitesse, mais de regard.</p>
+        </div>
+        <div class="card-footer">
+          <a href="article-hanoi.html" class="card-link">
+            En savoir plus
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
+          <span class="card-read-time">7 min de lecture</span>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="ft-inner">
+    <div class="ft-socials">
+      <a href="#" class="ft-icon" aria-label="Instagram"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".5" fill="currentColor" stroke="none"/></svg></a>
+      <a href="#" class="ft-icon" aria-label="YouTube"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="currentColor" stroke="none"/></svg></a>
+      <a href="#" class="ft-icon" aria-label="Twitter / X"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.261 5.632 5.903-5.632zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+    </div>
+    <p class="ft-copy">© 2025 Wander With Suzy</p>
+    <a href="#" onclick="event.preventDefault();window.scrollTo({top:0,behavior:'smooth'})" class="ft-top">Retour en haut <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg></a>
+  </div>
+</footer>
+
+<script>
+const navbar    = document.getElementById('navbar');
+const navToggle = document.getElementById('navToggle');
+const navMenu   = document.getElementById('navMenu');
+
+window.addEventListener('scroll', () => navbar.classList.toggle('scrolled', scrollY > 30));
+navToggle.addEventListener('click', () => {navMenu.classList.toggle('open');navToggle.classList.toggle('open')});
+navMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {navMenu.classList.remove('open');navToggle.classList.remove('open')}));
+</script>
+<script>
+(function(){
+  var css='.reveal{opacity:0;transform:translateY(20px);transition:opacity .55s ease,transform .55s ease}.reveal.visible{opacity:1;transform:translateY(0)}';
+  var st=document.createElement('style');st.textContent=css;document.head.appendChild(st);
+  var sel='.sec-title,.sec-sub,.eyebrow,.filter-bar,#map,.blog-card,.card,.stat-card,.nl-box,.art-lead,.article-body h2,.article-body p,.article-body blockquote,.art-img,.back-wrap';
+  var els=[...document.querySelectorAll(sel)].filter(el=>!el.closest('nav,footer,#hero,.article-hero'));
+  var seen=new Map();
+  els.forEach(el=>{
+    el.classList.add('reveal');
+    var p=el.parentElement,n=seen.get(p)||0;
+    el.dataset.rd=Math.min(n,3)*110;
+    seen.set(p,n+1);
+  });
+  var io=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(!e.isIntersecting)return;
+      e.target.style.transitionDelay=(e.target.dataset.rd||0)+'ms';
+      e.target.classList.add('visible');
+      io.unobserve(e.target);
+    });
+  },{threshold:.12,rootMargin:'0px 0px -30px 0px'});
+  els.forEach(el=>io.observe(el));
+})();
+</script>
+</body>
+</html>

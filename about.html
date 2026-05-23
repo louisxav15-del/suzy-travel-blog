@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>À propos — Voyage avec Suzy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --cream:#FFF8F0;--coral:#FF6B6B;--coral-dk:#E85555;
+  --forest:#2D6A4F;--dark:#2C2C2C;--mid:#666;--light:#999;--white:#fff;
+  --sh-sm:0 2px 14px rgba(0,0,0,.07);--sh-md:0 6px 28px rgba(0,0,0,.10);
+  --sh-lg:0 14px 48px rgba(0,0,0,.12);--r:16px;--nav:68px
+}
+html{scroll-behavior:smooth}
+body{background:var(--cream);color:var(--dark);font-family:'Lato',sans-serif;font-size:16px;line-height:1.7;overflow-x:hidden}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:900;
+  height:var(--nav);display:flex;align-items:center;justify-content:space-between;
+  padding:0 clamp(1rem,4vw,3rem);
+  background:rgba(255,248,240,.93);backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(255,107,107,.12);transition:box-shadow .3s
+}
+nav.scrolled{box-shadow:var(--sh-sm)}
+.nav-brand{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:var(--dark)}
+.nav-brand span{color:var(--coral)}
+.nav-menu{display:flex;list-style:none;gap:2.4rem}
+.nav-menu a{font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dark);position:relative;transition:color .2s}
+.nav-menu a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:2px;background:var(--coral);border-radius:2px;transition:width .25s}
+.nav-menu a:hover,.nav-menu a.active{color:var(--coral)}
+.nav-menu a:hover::after,.nav-menu a.active::after{width:100%}
+.nav-toggle{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:4px}
+.nav-toggle span{display:block;width:22px;height:2px;background:var(--dark);border-radius:2px;transition:all .3s}
+
+/* ── ABOUT HERO ── */
+.about-hero{
+  padding:calc(var(--nav) + 5rem) clamp(1rem,6vw,5rem) 5rem;
+  background:
+    radial-gradient(ellipse 55% 60% at 85% 15%,rgba(255,107,107,.10) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 50% at 15% 85%,rgba(45,106,79,.08) 0%,transparent 60%),
+    var(--cream);
+  position:relative;overflow:hidden
+}
+.ah-deco{position:absolute;border-radius:50%;pointer-events:none}
+.ah-d1{width:520px;height:520px;background:var(--coral);opacity:.05;top:-200px;right:-190px}
+.ah-d2{width:380px;height:380px;background:var(--forest);opacity:.05;bottom:-150px;left:-130px}
+
+.about-grid{
+  display:grid;grid-template-columns:360px 1fr;
+  gap:clamp(3rem,6vw,5.5rem);align-items:center;
+  max-width:1100px;margin:0 auto;position:relative;z-index:1
+}
+
+/* Photo column */
+.photo-col{display:flex;justify-content:center;align-items:center}
+.profile-wrap{position:relative;width:300px;height:300px;flex-shrink:0}
+.profile-wrap::before{
+  content:'';position:absolute;inset:-18px;border-radius:50%;
+  border:2px solid rgba(255,107,107,.28);
+  animation:spin 18s linear infinite
+}
+.profile-wrap::after{
+  content:'';position:absolute;inset:-36px;border-radius:50%;
+  border:1px dashed rgba(255,107,107,.14)
+}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+
+.profile-photo{
+  width:100%;height:100%;border-radius:50%;object-fit:cover;
+  border:5px solid var(--white);
+  box-shadow:0 8px 40px rgba(255,107,107,.18), var(--sh-md)
+}
+
+/* Floating badge */
+.profile-badge{
+  position:absolute;bottom:12px;right:-16px;
+  background:var(--white);border-radius:50px;
+  padding:.45rem 1rem .45rem .65rem;
+  display:flex;align-items:center;gap:.45rem;
+  box-shadow:var(--sh-md);font-size:.76rem;font-weight:700;
+  color:var(--dark);white-space:nowrap;
+  animation:fadeUp .8s .6s ease both
+}
+.badge-dot{width:8px;height:8px;border-radius:50%;background:#4CAF50;flex-shrink:0;box-shadow:0 0 0 3px rgba(76,175,80,.2)}
+
+/* Text column */
+.text-col{animation:fadeUp .8s .1s ease both}
+.ah-eyebrow{
+  display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--coral);background:rgba(255,107,107,.09);
+  border:1px solid rgba(255,107,107,.25);padding:.38rem 1rem;border-radius:50px;
+  margin-bottom:1.3rem
+}
+.ah-name{
+  font-family:'Playfair Display',serif;font-size:clamp(2.5rem,5vw,3.8rem);
+  font-weight:700;line-height:1.05;letter-spacing:-.025em;color:var(--dark);
+  margin-bottom:.5rem
+}
+.ah-name em{font-style:italic;color:var(--coral)}
+.ah-role{
+  font-family:'Playfair Display',serif;font-style:italic;
+  font-size:1.05rem;color:var(--mid);margin-bottom:1.8rem;
+  display:flex;align-items:center;gap:.6rem
+}
+.ah-role::before{content:'';width:32px;height:1.5px;background:var(--coral);flex-shrink:0}
+
+/* Bio paragraphs */
+.bio p{font-size:.98rem;color:var(--mid);line-height:1.8;margin-bottom:1.1rem}
+.bio p:last-child{margin-bottom:0}
+.bio strong{color:var(--dark);font-weight:700}
+
+/* Quote / signature */
+.bio-quote{
+  margin-top:1.8rem;padding:1.1rem 1.3rem;
+  border-left:3px solid var(--coral);background:rgba(255,107,107,.05);
+  border-radius:0 var(--r) var(--r) 0
+}
+.bio-quote p{
+  font-family:'Playfair Display',serif;font-style:italic;
+  font-size:1.02rem;color:var(--dark);line-height:1.6;margin-bottom:.5rem
+}
+.bio-quote cite{font-size:.76rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--coral)}
+
+/* Social links */
+.social-row{display:flex;gap:1rem;margin-top:1.8rem}
+.social-link{
+  display:inline-flex;align-items:center;gap:.5rem;
+  font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--forest);border:1.5px solid rgba(45,106,79,.25);
+  padding:.5rem 1.1rem;border-radius:50px;transition:all .22s
+}
+.social-link:hover{background:var(--forest);color:#fff;border-color:var(--forest)}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── STATS SECTION ── */
+.stats-section{
+  padding:clamp(3rem,6vw,5rem) clamp(1rem,5vw,3.5rem);
+  background:var(--forest);position:relative;overflow:hidden
+}
+.stats-section::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 60% 80% at 50% 50%,rgba(255,255,255,.04) 0%,transparent 70%)
+}
+.stats-inner{max-width:1100px;margin:0 auto;position:relative;z-index:1}
+.stats-header{text-align:center;margin-bottom:clamp(2rem,4vw,3rem)}
+.stats-eyebrow{
+  font-size:.7rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;
+  color:rgba(255,255,255,.55);margin-bottom:.6rem
+}
+.stats-title{
+  font-family:'Playfair Display',serif;font-size:clamp(1.7rem,3.5vw,2.5rem);
+  font-weight:700;color:var(--white);line-height:1.2
+}
+.stats-title em{font-style:italic;color:var(--coral)}
+
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.4rem}
+
+.stat-card{
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);
+  border-radius:var(--r);padding:clamp(1.5rem,3vw,2.5rem) 1.5rem;
+  text-align:center;transition:background .25s,transform .25s,box-shadow .25s;
+  position:relative;overflow:hidden
+}
+.stat-card::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,.03) 0%,transparent 60%);
+  pointer-events:none
+}
+.stat-card:hover{background:rgba(255,255,255,.14);transform:translateY(-5px);box-shadow:0 12px 36px rgba(0,0,0,.25)}
+
+.stat-num{
+  display:block;font-family:'Playfair Display',serif;
+  font-size:clamp(2.4rem,5vw,3.8rem);font-weight:700;
+  color:var(--coral);line-height:1;letter-spacing:-.02em;margin-bottom:.6rem
+}
+.stat-sep{
+  width:36px;height:2px;background:rgba(255,107,107,.35);
+  border-radius:2px;margin:.7rem auto
+}
+.stat-label{
+  font-size:.78rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:rgba(255,255,255,.65)
+}
+
+/* ── NEWSLETTER ── */
+.nl-section{
+  padding:clamp(4rem,8vw,7rem) clamp(1rem,5vw,3.5rem);
+  background:linear-gradient(160deg,var(--cream) 0%,#FFE8D4 100%);
+  position:relative;overflow:hidden
+}
+.nl-deco{position:absolute;border-radius:50%;pointer-events:none}
+.nl-d1{width:500px;height:500px;background:var(--coral);opacity:.06;top:-200px;right:-180px}
+.nl-d2{width:380px;height:380px;background:var(--forest);opacity:.05;bottom:-150px;left:-140px}
+
+.nl-inner{max-width:620px;margin:0 auto;position:relative;z-index:1;text-align:center}
+.nl-icon{
+  width:58px;height:58px;border-radius:50%;
+  background:rgba(255,107,107,.1);border:1.5px solid rgba(255,107,107,.25);
+  display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;
+  color:var(--coral)
+}
+.nl-eyebrow{
+  font-size:.7rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--coral);margin-bottom:.7rem
+}
+.nl-title{
+  font-family:'Playfair Display',serif;font-size:clamp(2rem,4.5vw,3rem);
+  font-weight:700;color:var(--dark);line-height:1.15;margin-bottom:.9rem
+}
+.nl-title em{font-style:italic;color:var(--coral)}
+.nl-sub{font-size:.98rem;color:var(--mid);max-width:480px;margin:0 auto 2.5rem;font-weight:300}
+
+/* Form */
+#nl-form{transition:opacity .4s,transform .4s}
+.nl-field{
+  display:flex;gap:.7rem;max-width:480px;margin:0 auto
+}
+.nl-input{
+  flex:1;padding:.9rem 1.3rem;border-radius:50px;
+  border:1.5px solid rgba(0,0,0,.1);background:var(--white);
+  font-family:'Lato',sans-serif;font-size:.94rem;color:var(--dark);
+  outline:none;transition:border-color .2s,box-shadow .2s;min-width:0
+}
+.nl-input::placeholder{color:var(--light)}
+.nl-input:focus{border-color:var(--coral);box-shadow:0 0 0 3px rgba(255,107,107,.12)}
+.nl-input.shake{animation:shake .5s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+
+.nl-btn{
+  padding:.9rem 1.8rem;border-radius:50px;border:none;cursor:pointer;
+  background:var(--coral);color:#fff;font-family:'Lato',sans-serif;
+  font-size:.82rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  white-space:nowrap;box-shadow:0 5px 20px rgba(255,107,107,.35);
+  transition:background .2s,transform .2s,box-shadow .2s
+}
+.nl-btn:hover{background:var(--coral-dk);transform:translateY(-2px);box-shadow:0 8px 28px rgba(255,107,107,.42)}
+.nl-btn:active{transform:translateY(0)}
+
+.nl-note{font-size:.74rem;color:var(--light);margin-top:.9rem}
+
+/* Success state */
+#nl-success{display:none;text-align:center}
+#nl-success.show{display:block;animation:successBounce .55s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes successBounce{
+  0%  {opacity:0;transform:translateY(20px) scale(.88)}
+  55% {opacity:1;transform:translateY(-8px) scale(1.04)}
+  75% {transform:translateY(4px) scale(.99)}
+  100%{opacity:1;transform:none}
+}
+.confetti-dot{position:fixed;width:9px;height:9px;border-radius:50%;pointer-events:none;z-index:9999;animation:confettiFly .75s cubic-bezier(.22,.61,.36,1) forwards}
+@keyframes confettiFly{
+  0%  {opacity:1;transform:translate(-50%,-50%) translate(0,0) scale(1)}
+  80% {opacity:.8}
+  100%{opacity:0;transform:translate(-50%,-50%) translate(var(--tx,0px),var(--ty,-50px)) scale(.25)}
+}
+.success-emoji{font-size:3rem;margin-bottom:1rem;display:block;line-height:1}
+.success-msg{
+  font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;
+  color:var(--dark);margin-bottom:.6rem;line-height:1.3
+}
+.success-sub{font-size:.9rem;color:var(--mid)}
+
+/* ── FOOTER ── */
+footer{background:var(--cream);border-top:2px solid var(--forest);text-align:center;padding:2.5rem 1rem}
+.ft-inner{display:flex;flex-direction:column;align-items:center;gap:1.2rem}
+.ft-socials{display:flex;gap:1rem;align-items:center}
+.ft-icon{color:var(--coral);display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border:1.5px solid rgba(255,107,107,.3);border-radius:50%;transition:all .22s}.ft-icon:hover{background:var(--coral);color:#fff;border-color:var(--coral)}
+.ft-copy{color:var(--mid);font-size:.82rem}
+.ft-top{display:inline-flex;align-items:center;gap:.4rem;font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--forest);transition:color .22s}.ft-top:hover{color:var(--coral)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .about-grid{grid-template-columns:1fr;text-align:center;gap:3rem}
+  .photo-col{justify-content:center}
+  .ah-role{justify-content:center}
+  .bio-quote{text-align:left}
+  .social-row{justify-content:center}
+  .profile-badge{right:50%;transform:translateX(50%)}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:768px){
+  .nav-menu{
+    position:fixed;top:var(--nav);left:0;right:0;z-index:901;
+    background:rgba(255,248,240,.97);backdrop-filter:blur(14px);
+    flex-direction:column;gap:0;padding:1rem 0 1.5rem;
+    border-bottom:1px solid rgba(255,107,107,.12);
+    transform:translateY(-110%);transition:transform .3s;pointer-events:none
+  }
+  .nav-menu.open{transform:translateY(0);pointer-events:auto}
+  .nav-menu li{width:100%}
+  .nav-menu a{display:block;padding:.9rem 2rem;font-size:.88rem}
+  .nav-menu a::after{display:none}
+  .nav-toggle{display:flex}
+  .nav-toggle.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+  .nav-toggle.open span:nth-child(2){opacity:0;transform:scaleX(0)}
+  .nav-toggle.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+  .nl-field{flex-direction:column;align-items:center}
+  .nl-input{width:100%;border-radius:var(--r)}
+  .nl-btn{width:100%;border-radius:var(--r)}
+}
+@media(max-width:480px){
+  .profile-wrap{width:240px;height:240px}
+  .profile-badge{
+    white-space:normal;
+    text-align:center;
+    justify-content:center;
+    font-size:.68rem;
+    padding:.38rem .85rem .38rem .65rem;
+    max-width:210px;
+    right:50%;
+    transform:translateX(50%);
+    bottom:6px
+  }
+  .stats-grid{gap:1rem}
+  .stat-card{padding:1.4rem 1rem}
+  .stat-num{font-size:2.2rem}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="index.html" class="nav-brand">Voyage <span>avec Suzy</span></a>
+  <ul class="nav-menu" id="navMenu">
+    <li><a href="index.html">Accueil</a></li>
+    <li><a href="blog.html">Blog</a></li>
+    <li><a href="about.html" class="active">À propos</a></li>
+  </ul>
+  <button class="nav-toggle" id="navToggle" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- ABOUT HERO -->
+<section class="about-hero">
+  <div class="ah-deco ah-d1"></div>
+  <div class="ah-deco ah-d2"></div>
+  <div class="about-grid">
+
+    <!-- Photo -->
+    <div class="photo-col">
+      <div class="profile-wrap">
+        <img
+          src="https://picsum.photos/seed/suzy-portrait-travel/400/400"
+          alt="Photo de profil de Suzy"
+          class="profile-photo"
+          loading="eager">
+        <div class="profile-badge">
+          <span class="badge-dot"></span>
+          Disponible pour des collaborations
+        </div>
+      </div>
+    </div>
+
+    <!-- Text -->
+    <div class="text-col">
+      <span class="ah-eyebrow">À propos</span>
+      <h1 class="ah-name">Bonjour, je suis<br><em>Suzy</em></h1>
+      <p class="ah-role">Blogueuse voyage &amp; storyteller · Lisbonne</p>
+
+      <div class="bio">
+        <p>Je m'appelle Suzy, et je viens de <strong>Lisbonne</strong> — la plus belle ville du monde, mais ne le répétez à personne. Pendant des années, j'ai rêvé de voyager en feuilletant des magazines dans ma chambre avec vue sur le Tage. En 2023, j'ai finalement tout quitté : mon bureau, ma routine et mes habitudes, pour me lancer dans l'aventure avec un simple sac à dos, un carnet de notes et une curiosité insatiable pour le monde.</p>
+        <p>Depuis, je parcours les continents en quête de <strong>saveurs oubliées</strong>, de couchers de soleil improbables et de ces conversations de hasard qui vous changent pour toujours. Ce blog, c'est mon journal de bord — honnête, enthousiaste, parfois maladroit. Je ne cherche pas à vous vendre une vie parfaite sur la route, mais à vous inviter à regarder le monde avec plus de <strong>curiosité et moins de peur</strong>.</p>
+      </div>
+
+      <blockquote class="bio-quote">
+        <p>« Voyager, ce n'est pas fuir — c'est choisir de rencontrer le monde les yeux grands ouverts. »</p>
+        <cite>— Suzy, quelque part entre Lisbonne et Tokyo</cite>
+      </blockquote>
+
+      <div class="social-row">
+        <a href="#" class="social-link">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          Instagram
+        </a>
+        <a href="blog.html" class="social-link">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          Lire le blog
+        </a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- STATS SECTION -->
+<section class="stats-section">
+  <div class="stats-inner">
+    <div class="stats-header">
+      <p class="stats-eyebrow">En chiffres</p>
+      <h2 class="stats-title">Deux ans de <em>route</em></h2>
+    </div>
+    <div class="stats-grid">
+
+      <div class="stat-card">
+        <span class="stat-num">8</span>
+        <div class="stat-sep"></div>
+        <span class="stat-label">Pays visités</span>
+      </div>
+
+      <div class="stat-card">
+        <span class="stat-num">47 000</span>
+        <div class="stat-sep"></div>
+        <span class="stat-label">km parcourus</span>
+      </div>
+
+      <div class="stat-card">
+        <span class="stat-num">2</span>
+        <div class="stat-sep"></div>
+        <span class="stat-label">Ans de voyage</span>
+      </div>
+
+      <div class="stat-card">
+        <span class="stat-num">156</span>
+        <div class="stat-sep"></div>
+        <span class="stat-label">Articles publiés</span>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- NEWSLETTER -->
+<section class="nl-section">
+  <div class="nl-deco nl-d1"></div>
+  <div class="nl-deco nl-d2"></div>
+  <div class="nl-inner">
+
+    <div class="nl-icon">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+    </div>
+
+    <p class="nl-eyebrow">Newsletter</p>
+    <h2 class="nl-title">Rejoignez<br>l'<em>aventure</em></h2>
+    <p class="nl-sub">Une lettre par mois — des destinations, des astuces, des histoires et mes coups de cœur du moment. Aucun spam, jamais.</p>
+
+    <form id="nl-form" novalidate>
+      <div class="nl-field">
+        <input
+          type="email"
+          id="nl-email"
+          class="nl-input"
+          placeholder="votre@email.com"
+          autocomplete="email"
+          required>
+        <button type="submit" class="nl-btn">S'abonner</button>
+      </div>
+      <p class="nl-note">Désabonnement en un clic. Vos données restent chez vous.</p>
+    </form>
+
+    <div id="nl-success" role="alert" aria-live="polite">
+      <span class="success-emoji">🎉</span>
+      <p class="success-msg">Vous y êtes !</p>
+      <p class="success-sub">Consultez votre boîte de réception pour de nouvelles aventures.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="ft-inner">
+    <div class="ft-socials">
+      <a href="#" class="ft-icon" aria-label="Instagram"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".5" fill="currentColor" stroke="none"/></svg></a>
+      <a href="#" class="ft-icon" aria-label="YouTube"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="currentColor" stroke="none"/></svg></a>
+      <a href="#" class="ft-icon" aria-label="Twitter / X"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.261 5.632 5.903-5.632zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+    </div>
+    <p class="ft-copy">© 2025 Wander With Suzy</p>
+    <a href="#" onclick="event.preventDefault();window.scrollTo({top:0,behavior:'smooth'})" class="ft-top">Retour en haut <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg></a>
+  </div>
+</footer>
+
+<script>
+/* NAV */
+const navbar    = document.getElementById('navbar');
+const navToggle = document.getElementById('navToggle');
+const navMenu   = document.getElementById('navMenu');
+window.addEventListener('scroll', () => navbar.classList.toggle('scrolled', scrollY > 30));
+navToggle.addEventListener('click', () => {navMenu.classList.toggle('open');navToggle.classList.toggle('open')});
+navMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {navMenu.classList.remove('open');navToggle.classList.remove('open')}));
+
+/* NEWSLETTER */
+const nlForm    = document.getElementById('nl-form');
+const nlEmail   = document.getElementById('nl-email');
+const nlSuccess = document.getElementById('nl-success');
+
+function spawnConfetti(origin) {
+  var rect    = origin.getBoundingClientRect();
+  var cx      = rect.left + rect.width  / 2;
+  var cy      = rect.top  + rect.height / 2;
+  var palette = ['#FF6B6B','#FF6B6B','#2D6A4F','#FF6B6B','#2D6A4F','#FF9E9E'];
+  var angles  = [220, 262, 304, 346, 28, 72];
+  palette.forEach(function(color, i) {
+    var dot  = document.createElement('span');
+    dot.className = 'confetti-dot';
+    var rad  = angles[i] * Math.PI / 180;
+    var dist = 52 + i * 9;
+    dot.style.cssText = 'left:' + cx + 'px;top:' + cy + 'px;background:' + color + ';animation-delay:' + (i * 55) + 'ms';
+    dot.style.setProperty('--tx', Math.round(Math.cos(rad) * dist) + 'px');
+    dot.style.setProperty('--ty', Math.round(Math.sin(rad) * dist) + 'px');
+    document.body.appendChild(dot);
+    setTimeout(function() { dot.remove(); }, 900 + i * 55);
+  });
+}
+
+nlForm.addEventListener('submit', function(e) {
+  e.preventDefault();
+
+  if (!nlEmail.value.trim() || !nlEmail.validity.valid) {
+    nlEmail.classList.remove('shake');
+    void nlEmail.offsetWidth; /* reflow to restart animation */
+    nlEmail.classList.add('shake');
+    nlEmail.focus();
+    return;
+  }
+
+  /* Confetti from button */
+  spawnConfetti(nlForm.querySelector('.nl-btn'));
+
+  /* Fade form out */
+  nlForm.style.transition = 'opacity .4s, transform .4s';
+  nlForm.style.opacity    = '0';
+  nlForm.style.transform  = 'translateY(-12px)';
+
+  setTimeout(function() {
+    nlForm.style.display = 'none';
+    nlSuccess.classList.add('show');
+  }, 400);
+});
+
+/* Stat counter animation on scroll */
+const statNums = document.querySelectorAll('.stat-num');
+let animated = false;
+
+function animateStats() {
+  if (animated) return;
+  const section = document.querySelector('.stats-section');
+  const rect = section.getBoundingClientRect();
+  if (rect.top < window.innerHeight * 0.85) {
+    animated = true;
+    statNums.forEach(el => {
+      const raw = el.textContent.replace(/\s/g, '');
+      const target = parseInt(raw, 10);
+      if (isNaN(target)) return;
+      const isLarge = target > 999;
+      const duration = 1400;
+      const step = 16;
+      const steps = duration / step;
+      let current = 0;
+      const increment = target / steps;
+      const timer = setInterval(() => {
+        current = Math.min(current + increment, target);
+        const rounded = Math.round(current);
+        el.textContent = isLarge
+          ? rounded.toLocaleString('fr-FR')
+          : String(rounded);
+        if (current >= target) clearInterval(timer);
+      }, step);
+    });
+  }
+}
+
+window.addEventListener('scroll', animateStats, { passive: true });
+animateStats();
+</script>
+<script>
+(function(){
+  var css='.reveal{opacity:0;transform:translateY(20px);transition:opacity .55s ease,transform .55s ease}.reveal.visible{opacity:1;transform:translateY(0)}';
+  var st=document.createElement('style');st.textContent=css;document.head.appendChild(st);
+  var sel='.sec-title,.sec-sub,.eyebrow,.filter-bar,#map,.blog-card,.card,.stat-card,.nl-box,.art-lead,.article-body h2,.article-body p,.article-body blockquote,.art-img,.back-wrap';
+  var els=[...document.querySelectorAll(sel)].filter(el=>!el.closest('nav,footer,#hero,.article-hero'));
+  var seen=new Map();
+  els.forEach(el=>{
+    el.classList.add('reveal');
+    var p=el.parentElement,n=seen.get(p)||0;
+    el.dataset.rd=Math.min(n,3)*110;
+    seen.set(p,n+1);
+  });
+  var io=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(!e.isIntersecting)return;
+      e.target.style.transitionDelay=(e.target.dataset.rd||0)+'ms';
+      e.target.classList.add('visible');
+      io.unobserve(e.target);
+    });
+  },{threshold:.12,rootMargin:'0px 0px -30px 0px'});
+  els.forEach(el=>io.observe(el));
+})();
+</script>
+</body>
+</html>
