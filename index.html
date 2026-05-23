@@ -351,49 +351,57 @@ const DEST = [
     city:'Lisbonne', country:'Portugal', coords:[38.7223,-9.1393],
     desc:"Là où tout a commencé. Pastéis de nata et couchers de soleil à l'heure dorée.",
     cat:'depart', label:'Point de départ', color:'#FF6B6B',
-    img:'https://picsum.photos/seed/lisbonne42/500/180'
+    img:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=500&q=80',
+    article:'article-lisbonne.html'
   },
   {
     city:'Tokyo', country:'Japon', coords:[35.6762,139.6503],
     desc:'Fleurs de cerisier et un magnifique chaos contrôlé.',
     cat:'culture', label:'Culture', color:'#4A90D9',
-    img:'https://picsum.photos/seed/tokyoview88/500/180'
+    img:'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=500&q=80',
+    article:'article-tokyo.html'
   },
   {
     city:'Bangkok', country:'Thaïlande', coords:[13.7563,100.5018],
     desc:'Le paradis de la cuisine de rue. Chaque recoin offre une nouvelle saveur.',
     cat:'gastronomie', label:'Gastronomie', color:'#E9921C',
-    img:'https://picsum.photos/seed/bangkokstreet77/500/180'
+    img:'https://images.unsplash.com/photo-1508009603885-50cf7c579365?auto=format&fit=crop&w=500&q=80',
+    article:'article-bangkok.html'
   },
   {
     city:'Marrakech', country:'Maroc', coords:[31.6295,-7.9811],
     desc:'Les souks, les couleurs, la folie grandiose.',
     cat:'aventure', label:'Aventure', color:'#2D6A4F',
-    img:'https://picsum.photos/seed/marrakech55/500/180'
+    img:'https://images.unsplash.com/photo-1580746738099-1cb74f972feb?auto=format&fit=crop&w=500&q=80',
+    article:'article-marrakech.html'
   },
   {
     city:'Côte amalfitaine', country:'Italie', coords:[40.6340,14.6027],
     desc:"Citronniers, routes à flanc de falaise et l'eau la plus bleue.",
     cat:'culture', label:'Culture', color:'#4A90D9',
-    img:'https://picsum.photos/seed/amalficoast33/500/180'
+    img:'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&w=500&q=80',
+    article:'article-amalfi.html'
   },
   {
     city:'Hanoï', country:'Vietnam', coords:[21.0278,105.8342],
     desc:'Motos, pho fumant et la magie du vieux quartier.',
     cat:'gastronomie', label:'Gastronomie', color:'#E9921C',
-    img:'https://picsum.photos/seed/hanoiold99/500/180'
+    img:'https://images.unsplash.com/photo-1583417319070-4a69db38a482?auto=format&fit=crop&w=500&q=80',
+    article:'article-hanoi.html'
   },
   {
     city:'Santorin', country:'Grèce', coords:[36.3932,25.4615],
     desc:'Dômes bleus et couchers de soleil incroyables.',
     cat:'culture', label:'Culture', color:'#4A90D9',
-    img:'https://picsum.photos/seed/santoriniblue66/500/180'
+    img:'https://images.unsplash.com/photo-1533105079780-92b9be482077?auto=format&fit=crop&w=500&q=80',
+    article:'article-santorin.html'
   },
   {
     city:'Bali', country:'Indonésie', coords:[-8.3405,115.0920],
     desc:"Rizières en terrasses à l'aube, encens des temples et surf.",
     cat:'aventure', label:'Aventure', color:'#2D6A4F',
-    img:'https://picsum.photos/seed/balitemple44/500/180'
+    img:'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=500&q=80',
+    article:'article-bali.html'
   }
 ];
 
@@ -425,7 +433,7 @@ const markers = DEST.map((d, i) => {
       <div class="pop-body">
         <h3 class="pop-title">${d.city}, <strong>${d.country}</strong></h3>
         <p class="pop-desc">${d.desc}</p>
-        <a href="#blog" class="pop-link">En savoir plus →</a>
+        <a href="${d.article}" class="pop-link">En savoir plus →</a>
       </div>
     </div>`;
 
