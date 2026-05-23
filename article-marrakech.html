@@ -48,10 +48,10 @@ nav.scrolled{box-shadow:var(--sh-sm)}
 footer{background:var(--dark);color:rgba(255,255,255,.5);text-align:center;padding:2.5rem 1rem;font-size:.84rem;line-height:2}
 footer strong{color:rgba(255,255,255,.88)}
 @media(max-width:768px){
-  .nav-menu{position:fixed;top:var(--nav);left:0;right:0;z-index:901;background:rgba(255,248,240,.97);backdrop-filter:blur(14px);flex-direction:column;gap:0;padding:1rem 0 1.5rem;border-bottom:1px solid rgba(255,107,107,.12);transform:translateY(-110%);transition:transform .3s;pointer-events:none}
+  .nav-menu{position:fixed;top:var(--nav);left:0;right:0;z-index:901;background:rgba(255,248,240,.97);backdrop-filter:blur(14px);flex-direction:column;gap:0;padding:1rem 0 1.5rem;border-bottom:1px solid rgba(255,107,107,.12);transform:translateY(calc(-100% - var(--nav)));transition:transform .3s;pointer-events:none}
   .nav-menu.open{transform:translateY(0);pointer-events:auto}
   .nav-menu li{width:100%}.nav-menu a{display:block;padding:.9rem 2rem;font-size:.88rem}.nav-menu a::after{display:none}
-  .nav-toggle{display:flex}
+  .nav-toggle{display:flex;position:relative;z-index:1000}
   .nav-toggle.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
   .nav-toggle.open span:nth-child(2){opacity:0;transform:scaleX(0)}
   .nav-toggle.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
